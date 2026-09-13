@@ -13,8 +13,28 @@ ProfileType = tuple[str, FreqDictType, int]
 "Language profile of a text. Contains language name, frequency dictionary and number of tokens."
 # Mark 4.
 
+with open ('en_text', 'r', encoding='utf-8') as t:
+    text_en_de = t.read()
+
 
 def tokenize(text: str) -> Sequence[str] | None:
+    if type(text) != str:
+        return None
+
+foreign_text = text_en_de.lower().split()
+print(foreign_text)
+
+clean_text = []
+for words in foreign_text:
+    list_1 = []
+    for letters in words:
+        if letters.isalpha():
+            list_1.append(letters)
+    new_list = ''.join(list_1)
+    if new_list:
+        clean_text.append(new_list)
+print(clean_text)
+
     """
     Splits a text into tokens, converts the tokens into lowercase,
     removes punctuation and other symbols from words
