@@ -2,7 +2,7 @@
 Lab 1.
 
 Language detection
-"""hello
+"""
 
 # pylint:disable=unused-argument
 from typing import Sequence
@@ -18,6 +18,18 @@ with open ('en_text', 'r', encoding='utf-8') as t:
 
 
 def tokenize(text: str) -> Sequence[str] | None:
+
+    """
+    Splits a text into tokens, converts the tokens into lowercase,
+    removes punctuation and other symbols from words
+
+    Args:
+       text (str): Text
+
+    Returns:
+        Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
+        Returns None if input text is not a string.
+    """
     if type(text) != str:
         return None
 
@@ -34,19 +46,6 @@ for words in foreign_text:
     if new_list:
         clean_text.append(new_list)
 print(clean_text)
-
-    """
-    Splits a text into tokens, converts the tokens into lowercase,
-    removes punctuation and other symbols from words
-
-    Args:
-       text (str): Text
-
-    Returns:
-        Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
-        Returns None if input text is not a string.
-    """
-
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
     """
