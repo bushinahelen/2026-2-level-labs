@@ -16,7 +16,6 @@ ProfileType = tuple[str, FreqDictType, int]
 with open ('en_text', 'r', encoding='utf-8') as t:
     text_en_de = t.read()
 
-
 def tokenize(text: str) -> Sequence[str] | None:
 
     """
@@ -32,20 +31,18 @@ def tokenize(text: str) -> Sequence[str] | None:
     """
     if type(text) != str:
         return None
-
-foreign_text = text_en_de.lower().split()
-print(foreign_text)
-
-clean_text = []
-for words in foreign_text:
-    list_1 = []
-    for letters in words:
-        if letters.isalpha():
-            list_1.append(letters)
-    new_list = ''.join(list_1)
-    if new_list:
-        clean_text.append(new_list)
-print(clean_text)
+    else:
+        foreign_text = text.lower().split()
+        clean_text = []
+        for words in foreign_text:
+            list_1 = []
+            for letters in words:
+                if letters.isalpha():
+                    list_1.append(letters)
+            new_list = ''.join(list_1)
+            if new_list:
+                clean_text.append(new_list)
+        return clean_text
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
     """
@@ -70,6 +67,12 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         dict[str, float] | None: Dictionary with frequencies.
         Returns None in case of incorrect input types.
     """
+    length_text = len(tokens)
+    dictionary = {}
+    for word in tokens:
+        dictionary[word] = dictionary.get(word, 0) + 1
+    dictionary = {word: value/length_text for word, value in dictionary.items()}
+    return dictionary
 
 
 def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | None:
@@ -84,6 +87,8 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Sequence[str] | None: Sequence of the most common words.
         Returns None in case of incorrect input types or non-positive top_n.
     """
+    sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))
+    return [word for word ,_ in sorted_dictionary[:top_n]]
 
 
 # Mark 6.
