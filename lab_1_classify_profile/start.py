@@ -1,8 +1,12 @@
 """
 Language detection starter.
 """
+from main.py import tokenize, calculate_frequencies, get_top_n_words
 
 # pylint: disable=unused-variable, duplicate-code
+
+with open ('en_text', 'r', encoding='utf-8') as t:
+    text_en_de = t.read()
 
 
 def main() -> None:

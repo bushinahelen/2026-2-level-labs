@@ -13,8 +13,6 @@ ProfileType = tuple[str, FreqDictType, int]
 "Language profile of a text. Contains language name, frequency dictionary and number of tokens."
 # Mark 4.
 
-with open ('en_text', 'r', encoding='utf-8') as t:
-    text_en_de = t.read()
 
 def tokenize(text: str) -> Sequence[str] | None:
 
@@ -55,7 +53,10 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
         Sequence[str] | None: Sequence of tokens without stop words.
         Returns None in case of incorrect input types.
     """
-
+    if type(tokens) != str or type(stop_words) != str:
+        return None
+    clean_tokens = [word for word in tokens if word not in stop_words]
+    return clean_tokens
 
 def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     """
@@ -71,6 +72,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     dictionary = {}
     for word in tokens:
         dictionary[word] = dictionary.get(word, 0) + 1
+
     dictionary = {word: value/length_text for word, value in dictionary.items()}
     return dictionary
 
@@ -87,6 +89,16 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Sequence[str] | None: Sequence of the most common words.
         Returns None in case of incorrect input types or non-positive top_n.
     """
+    if type(freq_dict) != dict:
+        return None
+    for word, number in freq_dict.items():
+        if type(word) != str:
+            return None
+        if type(number) != float:
+            return None
+    if type(top_n) != int:
+        return None
+
     sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))
     return [word for word ,_ in sorted_dictionary[:top_n]]
 
