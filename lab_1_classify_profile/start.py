@@ -1,13 +1,9 @@
 """
 Language detection starter.
 """
-from main.py import tokenize, calculate_frequencies, get_top_n_words
+from main.py import tokenize, calculate_frequencies, get_top_n_words, remove_stop_words
 
 # pylint: disable=unused-variable, duplicate-code
-
-with open ('en_text', 'r', encoding='utf-8') as t:
-    text_en_de = t.read()
-
 
 def main() -> None:
     """
@@ -23,6 +19,11 @@ def main() -> None:
         en_text = file.read()
     result = None
     assert result, "Detection result is None"
+
+print(tokenize(text))
+print(remove_stop_words(tokens, stop_words))
+print(calculate_frequencies(tokens))
+print(get_top_n_words(freq_dict, top_n))
 
 
 if __name__ == "__main__":
