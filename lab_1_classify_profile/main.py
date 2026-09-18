@@ -144,7 +144,8 @@ def create_language_profile(
     tokenized_text = tokenize(text)
     edited_text = (calculate_frequencies(remove_stop_words(tokenized_text,stop_words)))
     unique_tokens = len(set(tokenized_text))
-    return (language, edited_text, unique_tokens)
+    language_profile = (language, edited_text, unique_tokens)
+    return language_profile
 
 def check_profile(profile: ProfileType) -> bool:
 

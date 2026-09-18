@@ -1,7 +1,10 @@
 """
 Language detection starter.
 """
-from main import tokenize, calculate_frequencies, get_top_n_words, remove_stop_words
+from main import (
+    tokenize, remove_stop_words, calculate_frequencies, get_top_n_words,
+    create_language_profile, check_profile
+)
 
 # pylint: disable=unused-variable, duplicate-code
 
@@ -30,6 +33,13 @@ def main() -> None:
 
     top_words = get_top_n_words(freq_dict, 10)
     print(top_words)
+
+    language_profile = create_language_profile('ru', unknown_text, stopwords)
+    print(create_language_profile('de', unknown_text, stopwords))
+
+    print(check_profile(language_profile))
+
+
 
     assert result, "Detection result is None"
 
