@@ -35,7 +35,7 @@ def main() -> None:
     print(top_words)
 
     language_profile = create_language_profile('ru', unknown_text, stopwords)
-    print(create_language_profile('de', unknown_text, stopwords))
+    print(language_profile)
 
     print(check_profile(language_profile))
 
