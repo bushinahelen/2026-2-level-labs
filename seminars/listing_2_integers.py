@@ -1,4 +1,3 @@
-import math
 """
 Programming 2026.
 
@@ -59,10 +58,12 @@ def add_numbers(a: int, b: int) -> int:
     Returns:
         int: Sum of a and b
     """
-    return(a + b)
+    # student implementation goes here
 
 
-print(add_numbers(5,4))
+# add_numbers(2, 3) → 5
+# add_numbers(-5, 10) → 5
+# add_numbers(0, 0) → 0
 
 
 # Task 2:
@@ -78,11 +79,12 @@ def average(a: float, b: float, c: float) -> float:
     Returns:
         float: Average value of the three numbers
     """
-    average_number = (a + b + c) / 3
-    return(average_number)
+    # student implementation goes here
 
 
-print(average(1, 2, 3))
+# average(1, 2, 3) → 2.0
+# average(10, 20, 30) → 20.0
+# average(5.5, 6.5, 7.5) → 6.5
 
 
 # Task 3:
@@ -96,14 +98,13 @@ def is_even(n: int) -> bool:
     Returns:
         bool: True if n is even, False otherwise
     """
-    if n % 2 == 0:
-        return(True)
-    else:
-        return(False)
+    # student implementation goes here
 
 
-print(is_even(2))
-print(is_even(3))
+# is_even(2) → True
+# is_even(3) → False
+# is_even(0) → True
+# is_even(-4) → True
 
 
 # Task 4:
@@ -117,9 +118,9 @@ def area_of_circle(radius: float) -> float:
     Returns:
         float: Area of the circle
     """
-    return math.pi * radius ** 2
+    # student implementation goes here
 
-print(area_of_circle(3))
+
 # area_of_circle(1) → 3.14159...
 # area_of_circle(0) → 0
 # area_of_circle(2.5) → ~19.63495
@@ -136,11 +137,8 @@ def factorial(n: int) -> int:
     Returns:
         int: Factorial of n
     """
-    for i in range (n):
-        print(i*n)
+    # student implementation goes here
 
-
-print(factorial(4))
 
 # factorial(0) → 1
 # factorial(1) → 1
