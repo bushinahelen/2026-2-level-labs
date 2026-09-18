@@ -27,20 +27,21 @@ def tokenize(text: str) -> Sequence[str] | None:
         Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
         Returns None if input text is not a string.
     """
+
     if not isinstance(text, str):
         return None
 
     foreign_text = text.lower().split()
-    clean_text = []
+    tokens = []
     for words in foreign_text:
         list_1 = []
         for letters in words:
             if letters.isalpha():
                 list_1.append(letters)
-        new_list = ''.join(list_1)
-        if new_list:
-            clean_text.append(new_list)
-    return clean_text
+        new_words = ''.join(list_1)
+        if new_words:
+            tokens.append(new_words)
+    return tokens
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
     """
@@ -69,16 +70,20 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         dict[str, float] | None: Dictionary with frequencies.
         Returns None in case of incorrect input types.
     """
-
     if (not isinstance(tokens, Sequence)) and (not isinstance(tokens, str)):
         return None
+    if not tokens:
+        return None
 
-    length_text = len(tokens)
-    dictionary = {}
+    number_tokens = len(tokens)
+    freq_dict = {}
     for word in tokens:
-        dictionary[word] = dictionary.get(word, 0) + 1
+        if word in freq_dict:
+            freq_dict[word] = freq_dict.get(word, 1) + 1
+        else:
+            freq_dict[word] = freq_dict.get(word, 1)
 
-    return {word: value/length_text for word, value in dictionary.items()}
+    return {word: value/number_tokens for word, value in freq_dict.items()}
 
 
 def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | None:
@@ -104,9 +109,11 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
             return None
     if not isinstance(top_n, int):
         return None
+    if top_n <= 0:
+        return None
 
     sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))
-    return [word for word ,_ in sorted_dictionary[:top_n]]
+    return [word for word ,number in sorted_dictionary[:top_n]]
 
 
 # Mark 6.
