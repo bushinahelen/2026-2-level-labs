@@ -27,20 +27,20 @@ def tokenize(text: str) -> Sequence[str] | None:
         Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
         Returns None if input text is not a string.
     """
-    if type(text) != str:
+    if not isinstance(text, str):
         return None
-    else:
-        foreign_text = text.lower().split()
-        clean_text = []
-        for words in foreign_text:
-            list_1 = []
-            for letters in words:
-                if letters.isalpha():
-                    list_1.append(letters)
-            new_list = ''.join(list_1)
-            if new_list:
-                clean_text.append(new_list)
-        return clean_text
+
+    foreign_text = text.lower().split()
+    clean_text = []
+    for words in foreign_text:
+        list_1 = []
+        for letters in words:
+            if letters.isalpha():
+                list_1.append(letters)
+        new_list = ''.join(list_1)
+        if new_list:
+            clean_text.append(new_list)
+    return clean_text
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
     """
@@ -53,9 +53,11 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
         Sequence[str] | None: Sequence of tokens without stop words.
         Returns None in case of incorrect input types.
     """
-
-    clean_tokens = [word for word in tokens if word not in stop_words]
-    return clean_tokens
+    if (not isinstance(tokens, Sequence)) and (not isinstance(tokens, str)):
+        return None
+    if (not isinstance(stop_words, Sequence)) and (not isinstance(stop_words, str)):
+        return None
+    return [word for word in tokens if word not in stop_words]
 
 def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     """
@@ -67,13 +69,16 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         dict[str, float] | None: Dictionary with frequencies.
         Returns None in case of incorrect input types.
     """
+
+    if (not isinstance(tokens, Sequence)) and (not isinstance(tokens, str)):
+        return None
+
     length_text = len(tokens)
     dictionary = {}
     for word in tokens:
         dictionary[word] = dictionary.get(word, 0) + 1
 
-    dictionary = {word: value/length_text for word, value in dictionary.items()}
-    return dictionary
+    return {word: value/length_text for word, value in dictionary.items()}
 
 
 def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | None:
@@ -90,14 +95,14 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Returns None in case of incorrect input types or non-positive top_n.
     """
 
-    if type(freq_dict) != dict:
+    if not isinstance(freq_dict, dict):
         return None
     for word, number in freq_dict.items():
-        if type(word) != str:
+        if not isinstance(word, str):
             return None
-        if type(number) != float:
+        if not isinstance(number, float):
             return None
-    if type(top_n) != int:
+    if not isinstance(top_n, int):
         return None
 
     sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))

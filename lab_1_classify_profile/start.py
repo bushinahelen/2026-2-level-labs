@@ -18,8 +18,6 @@ def main() -> None:
     with open("lab_1_classify_profile/assets/texts/en.txt", "r", encoding="utf-8") as file:
         en_text = file.read()
     result = None
-    assert result, "Detection result is None"
-
 
     tokens = tokenize(unknown_text)
     print(tokens)
@@ -32,6 +30,8 @@ def main() -> None:
 
     top_words = get_top_n_words(freq_dict, 10)
     print(top_words)
+
+    assert result, "Detection result is None"
 
 
 if __name__ == "__main__":
