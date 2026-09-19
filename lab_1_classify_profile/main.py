@@ -161,11 +161,11 @@ def check_profile(profile: ProfileType) -> bool:
     """
     if not isinstance (profile, tuple):
         return False
+
     language, freq_dict, unique_tokens = profile
 
     if not isinstance(language, str):
         return False
-
 
     if not isinstance(freq_dict, dict):
         return False
