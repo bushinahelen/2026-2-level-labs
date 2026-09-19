@@ -20,28 +20,15 @@ def main() -> None:
         stopwords = file.read().split("\n")
     with open("lab_1_classify_profile/assets/texts/en.txt", "r", encoding="utf-8") as file:
         en_text = file.read()
-    result = None
 
     tokens = tokenize(unknown_text)
-    print(tokens)
-
     tokens_without_stopwords = remove_stop_words(tokens, stopwords)
-    print(tokens_without_stopwords)
-
     freq_dict = calculate_frequencies(tokens_without_stopwords)
-    print(freq_dict)
-
     top_words = get_top_n_words(freq_dict, 10)
-    print(top_words)
-
     language_profile = create_language_profile('ru', unknown_text, stopwords)
-    print(language_profile)
-
-    print(check_profile(language_profile))
-
-
-
+    result = check_profile(language_profile)
     assert result, "Detection result is None"
+    print(result)
 
 
 if __name__ == "__main__":
