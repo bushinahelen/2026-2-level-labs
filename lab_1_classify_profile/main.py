@@ -74,7 +74,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         dict[str, float] | None: Dictionary with frequencies.
         Returns None in case of incorrect input types.
     """
-    if (not isinstance(tokens, Sequence)):
+    if not isinstance(tokens, Sequence):
         return None
     if not all(isinstance(token, str) for token in tokens):
         return None
@@ -147,8 +147,7 @@ def create_language_profile(
     tokenized_text = tokenize(text)
     edited_text = (calculate_frequencies(remove_stop_words(tokenized_text,stop_words)))
     unique_tokens = len(set(tokenized_text))
-    language_profile = (language, edited_text, unique_tokens)
-    return language_profile
+    return (language, edited_text, unique_tokens)
 
 def check_profile(profile: ProfileType) -> bool:
 
@@ -172,16 +171,14 @@ def check_profile(profile: ProfileType) -> bool:
 
     if not isinstance(freq_dict, dict):
         return False
-    for word, number in freq_dict.items():
-        if not isinstance(word, str):
+    if not all (isinstance(word, str) for word in freq_dict.keys()):
             return False
-        if not isinstance(number, float):
+    if not all (isinstance(number, (int, float)) for number in freq_dict.values()):
             return False
     if not isinstance(unique_tokens, int):
         return False
 
     return True
-
 
 def compare_profiles_by_top_n(
     unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
