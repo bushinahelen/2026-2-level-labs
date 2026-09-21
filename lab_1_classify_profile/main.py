@@ -145,8 +145,9 @@ def create_language_profile(
         return None
 
     tokenized_text = tokenize(text)
-    edited_text = (calculate_frequencies(remove_stop_words(tokenized_text,stop_words)))
-    unique_tokens = len(set(tokenized_text))
+    filtered = remove_stop_words(tokenized_text, stop_words)
+    edited_text = calculate_frequencies(filtered)
+    unique_tokens = len(set(edited_text))
     return (language, edited_text, unique_tokens)
 
 def check_profile(profile: ProfileType) -> bool:
@@ -163,6 +164,8 @@ def check_profile(profile: ProfileType) -> bool:
     """
     if not isinstance (profile, tuple):
         return False
+    if len(profile) != 3:
+        return False
 
     language, freq_dict, unique_tokens = profile
 
@@ -173,7 +176,7 @@ def check_profile(profile: ProfileType) -> bool:
         return False
     if not all (isinstance(word, str) for word in freq_dict.keys()):
             return False
-    if not all (isinstance(number, (int, float)) for number in freq_dict.values()):
+    if not all (isinstance(number, float) for number in freq_dict.values()):
             return False
     if not isinstance(unique_tokens, int):
         return False
