@@ -145,8 +145,7 @@ def create_language_profile(
         return None
 
     tokenized_text = tokenize(text)
-    filtered = remove_stop_words(tokenized_text, stop_words)
-    edited_text = calculate_frequencies(filtered)
+    edited_text = calculate_frequencies(remove_stop_words(tokenized_text, stop_words))
     unique_tokens = len(set(edited_text))
     return (language, edited_text, unique_tokens)
 
