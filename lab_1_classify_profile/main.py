@@ -58,6 +58,10 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
         return None
     if (not isinstance(stop_words, Sequence)):
         return None
+    if not all(isinstance(word, str) for word in tokens):
+        return None
+    if not all(isinstance(stop_word, str) for stop_word in stop_words):
+        return None
     return [word for word in tokens if word not in stop_words]
 
 def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
@@ -72,16 +76,17 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     """
     if (not isinstance(tokens, Sequence)):
         return None
+    if not all(isinstance(token, str) for token in tokens):
+        return None
     if not tokens:
         return None
 
     number_tokens = len(tokens)
     freq_dict = {}
     for word in tokens:
-        if word in freq_dict:
-            freq_dict[word] = freq_dict.get(word, 1) + 1
-        else:
-            freq_dict[word] = freq_dict.get(word, 1)
+        if word not in freq_dict:
+            freq_dict[word] = 0
+        freq_dict[word] += 1
 
     return {word: value/number_tokens for word, value in freq_dict.items()}
 
@@ -105,11 +110,9 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
     for word, number in freq_dict.items():
         if not isinstance(word, str):
             return None
-        if not isinstance(number, float):
+        if not isinstance(number, (int, float)):
             return None
-    if not isinstance(top_n, int):
-        return None
-    if top_n <= 0:
+    if not isinstance(top_n, int) or top_n <= 0:
         return None
 
     sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))
