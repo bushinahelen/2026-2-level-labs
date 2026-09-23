@@ -15,7 +15,6 @@ ProfileType = tuple[str, FreqDictType, int]
 
 
 def tokenize(text: str) -> Sequence[str] | None:
-
     """
     Splits a text into tokens, converts the tokens into lowercase,
     removes punctuation and other symbols from words
@@ -27,7 +26,6 @@ def tokenize(text: str) -> Sequence[str] | None:
         Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
         Returns None if input text is not a string.
     """
-
     if not isinstance(text, str):
         return None
 
@@ -92,7 +90,6 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
 
 
 def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | None:
-
     """
     Finds the most common words
 
@@ -104,7 +101,6 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Sequence[str] | None: Sequence of the most common words.
         Returns None in case of incorrect input types or non-positive top_n.
     """
-
     if not(
         isinstance(freq_dict, dict)
         and all([isinstance(word, str) for word in freq_dict])
@@ -136,7 +132,6 @@ def create_language_profile(
         ProfileType | None: Language profile.
         Returns None in case of incorrect input types.
     """
-
     if not all([isinstance(language, str), isinstance(text, str), isinstance(stop_words, Sequence)]):
         return None
     if not all([isinstance(word, str) for word in stop_words]):
