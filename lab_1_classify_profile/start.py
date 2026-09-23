@@ -1,9 +1,9 @@
 """
 Language detection starter.
 """
-from lab_1_classify_profile.main import tokenize, remove_stop_words, calculate_frequencies, get_top_n_words
 
 # pylint: disable=unused-variable, duplicate-code
+from lab_1_classify_profile.main import tokenize, remove_stop_words, calculate_frequencies, get_top_n_words
 
 def main() -> None:
     """
