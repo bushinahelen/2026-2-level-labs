@@ -5,6 +5,7 @@ Language detection starter.
 # pylint: disable=unused-variable, duplicate-code
 from lab_1_classify_profile.main import tokenize, remove_stop_words, calculate_frequencies, get_top_n_words
 
+
 def main() -> None:
     """
     Launches an implementation.
@@ -17,7 +18,6 @@ def main() -> None:
         stopwords = file.read().split("\n")
     with open("lab_1_classify_profile/assets/texts/en.txt", "r", encoding="utf-8") as file:
         en_text = file.read()
-
     tokens = tokenize(de_text)
     cleaned_tokens = remove_stop_words(tokens, stopwords)
     freq_dict = calculate_frequencies(cleaned_tokens)
