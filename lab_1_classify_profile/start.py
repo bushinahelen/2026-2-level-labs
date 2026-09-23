@@ -19,9 +19,9 @@ def main() -> None:
         en_text = file.read()
 
     tokens = tokenize(de_text)
-    cleaned_tokens = remove_stop_words(tokens, stopwords) if tokens is not None else None
-    freq_dict = calculate_frequencies(cleaned_tokens) if cleaned_tokens is not None else None
-    result = get_top_n_words(freq_dict, 7) if freq_dict is not None else None
+    cleaned_tokens = remove_stop_words(tokens, stopwords)
+    freq_dict = calculate_frequencies(cleaned_tokens)
+    result = get_top_n_words(freq_dict, 7)
     assert result, "Detection result is None"
     print(result)
 
