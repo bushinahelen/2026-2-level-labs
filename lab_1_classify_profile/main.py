@@ -124,7 +124,6 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
 def create_language_profile(
     language: str, text: str, stop_words: Sequence[str]
 ) -> ProfileType | None:
-
     """
     Creates a language profile
 
@@ -149,7 +148,6 @@ def create_language_profile(
     return (language, freq_dict, unique_tokens)
 
 def check_profile(profile: ProfileType) -> bool:
-
     """
     Checks profile structure
 
