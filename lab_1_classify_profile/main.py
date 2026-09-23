@@ -31,16 +31,16 @@ def tokenize(text: str) -> Sequence[str] | None:
     if not isinstance(text, str):
         return None
 
-    foreign_text = text.lower().split()
+    text = text.lower().split()
     tokens = []
-    for words in foreign_text:
-        list_1 = []
+    for words in text:
+        list_for_letters = []
         for letters in words:
             if letters.isalpha():
-                list_1.append(letters)
-        new_words = ''.join(list_1)
-        if new_words:
-            tokens.append(new_words)
+                list_for_letters.append(letters)
+        clean_word = ''.join(list_for_letters)
+        if clean_word:
+            tokens.append(clean_word)
     return tokens
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
@@ -54,13 +54,13 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
         Sequence[str] | None: Sequence of tokens without stop words.
         Returns None in case of incorrect input types.
     """
-    if (not isinstance(tokens, Sequence)):
+    if not isinstance(tokens, Sequence):
         return None
-    if (not isinstance(stop_words, Sequence)):
+    if not isinstance(stop_words, Sequence):
         return None
-    if not all(isinstance(word, str) for word in tokens):
+    if not all([isinstance(word, str) for word in tokens]):
         return None
-    if not all(isinstance(stop_word, str) for stop_word in stop_words):
+    if not all([isinstance(stop_word, str) for stop_word in stop_words]):
         return None
     return [word for word in tokens if word not in stop_words]
 
@@ -76,7 +76,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     """
     if not isinstance(tokens, Sequence):
         return None
-    if not all(isinstance(token, str) for token in tokens):
+    if not all([isinstance(word, str) for word in tokens]):
         return None
     if not tokens:
         return None
@@ -84,9 +84,10 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     number_tokens = len(tokens)
     freq_dict = {}
     for word in tokens:
-        if word not in freq_dict:
-            freq_dict[word] = 0
-        freq_dict[word] += 1
+        if word in freq_dict:
+            freq_dict[word] += 1
+        else:
+            freq_dict[word] = 1
 
     return {word: value/number_tokens for word, value in freq_dict.items()}
 
@@ -115,8 +116,8 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
     if not isinstance(top_n, int) or top_n <= 0:
         return None
 
-    sorted_dictionary = sorted(freq_dict.items(), key = lambda item:(-item[1], item[0]))
-    return [word for word ,number in sorted_dictionary[:top_n]]
+    sorted_dictionary = dict(sorted(freq_dict.items(), key = lambda item:(-item[1], item[0])))
+    return [word for word , _ in sorted_dictionary[:top_n]]
 
 
 # Mark 6.
@@ -139,15 +140,15 @@ def create_language_profile(
         Returns None in case of incorrect input types.
     """
 
-    if not isinstance(language, str) or not isinstance(text, str) or not isinstance(stop_words, Sequence):
+    if not all([isinstance(language, str), isinstance(text, str), isinstance(stop_words, Sequence)]):
         return None
-    if not text:
+    if not all([isinstance(word, str) for word in stop_words]):
         return None
 
     tokenized_text = tokenize(text)
-    edited_text = calculate_frequencies(remove_stop_words(tokenized_text, stop_words))
-    unique_tokens = len(set(edited_text))
-    return (language, edited_text, unique_tokens)
+    freq_dict = calculate_frequencies(remove_stop_words(tokenized_text, stop_words))
+    unique_tokens = len(set(freq_dict))
+    return (language, freq_dict, unique_tokens)
 
 def check_profile(profile: ProfileType) -> bool:
 
@@ -161,21 +162,18 @@ def check_profile(profile: ProfileType) -> bool:
         bool: Returns True if the profile has right structure and types,
         otherwise returns False.
     """
-    if not isinstance (profile, tuple):
-        return False
-    if len(profile) != 3:
+    if not isinstance (profile, tuple) or len(profile) != 3:
         return False
 
     language, freq_dict, unique_tokens = profile
 
     if not isinstance(language, str):
         return False
-
     if not isinstance(freq_dict, dict):
         return False
-    if not all (isinstance(word, str) for word in freq_dict.keys()):
+    if not all(isinstance(word, str) for word in freq_dict.keys()):
             return False
-    if not all (isinstance(number, float) for number in freq_dict.values()):
+    if not all(isinstance(number, float) for number in freq_dict.values()):
             return False
     if not isinstance(unique_tokens, int):
         return False
