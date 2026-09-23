@@ -54,14 +54,14 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
         Sequence[str] | None: Sequence of tokens without stop words.
         Returns None in case of incorrect input types.
     """
-    if not isinstance(tokens, Sequence):
+    if not(
+        isinstance(tokens, Sequence)
+        and isinstance(stop_words, Sequence)
+        and all([isinstance(word, str) for word in tokens])
+        and all([isinstance(stop_word, str) for stop_word in stop_words])
+    ):
         return None
-    if not isinstance(stop_words, Sequence):
-        return None
-    if not all([isinstance(word, str) for word in tokens]):
-        return None
-    if not all([isinstance(stop_word, str) for stop_word in stop_words]):
-        return None
+
     return [word for word in tokens if word not in stop_words]
 
 def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
@@ -74,11 +74,10 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         dict[str, float] | None: Dictionary with frequencies.
         Returns None in case of incorrect input types.
     """
-    if not isinstance(tokens, Sequence):
-        return None
-    if not all([isinstance(word, str) for word in tokens]):
-        return None
-    if not tokens:
+    if not(
+        isinstance(tokens, Sequence)
+        and all([isinstance(word, str) for word in tokens])
+    ):
         return None
 
     number_tokens = len(tokens)
@@ -89,7 +88,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         else:
             freq_dict[word] = 1
 
-    return {word: value/number_tokens for word, value in freq_dict.items()}
+    return {word: value / number_tokens for word, value in freq_dict.items()}
 
 
 def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | None:
@@ -106,22 +105,17 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Returns None in case of incorrect input types or non-positive top_n.
     """
 
-    if not isinstance(freq_dict, dict):
-        return None
-    for word, number in freq_dict.items():
-        if not all([isinstance(word, str) for word in freq_dict]):
-            return None
-        if not all([isinstance(number, float) for number in freq_dict]):
-            return None
-    if not isinstance(top_n, int):
-        return None
-    if top_n <= 0:
+    if not(
+        isinstance(freq_dict, dict)
+        and all([isinstance(word, str) for word in freq_dict])
+        and all([isinstance(number, float) for number in freq_dict.values()])
+        and isinstance(top_n, int)
+        and top_n > 0
+    ):
         return None
 
     sorted_dictionary = dict(sorted(freq_dict.items(), key = lambda item:(-item[1], item[0])))
     return list(sorted_dictionary)[:top_n]
-
-
 
 
 # Mark 6.
