@@ -109,15 +109,19 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
     if not isinstance(freq_dict, dict):
         return None
     for word, number in freq_dict.items():
-        if not isinstance(word, str):
+        if not all([isinstance(word, str) for word in freq_dict]):
             return None
-        if not isinstance(number, (int, float)):
+        if not all([isinstance(number, float) for number in freq_dict]):
             return None
-    if not isinstance(top_n, int) or top_n <= 0:
+    if not isinstance(top_n, int):
+        return None
+    if top_n <= 0:
         return None
 
     sorted_dictionary = dict(sorted(freq_dict.items(), key = lambda item:(-item[1], item[0])))
-    return [word for word , _ in sorted_dictionary[:top_n]]
+    return list(sorted_dictionary)[:top_n]
+
+
 
 
 # Mark 6.
