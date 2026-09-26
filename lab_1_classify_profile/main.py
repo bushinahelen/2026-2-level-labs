@@ -83,8 +83,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     for word in tokens:
         if word in freq_dict:
             freq_dict[word] += 1
-        else:
-            freq_dict[word] = 1
+        freq_dict[word] = 1
 
     return {word: value / number_tokens for word, value in freq_dict.items()}
 
@@ -140,7 +139,7 @@ def create_language_profile(
     tokenized_text = tokenize(text)
     freq_dict = calculate_frequencies(remove_stop_words(tokenized_text, stop_words))
     unique_tokens = len(set(freq_dict))
-    return (language, freq_dict, unique_tokens)
+    return language, freq_dict, unique_tokens
 
 def check_profile(profile: ProfileType) -> bool:
     """
