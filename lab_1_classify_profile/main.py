@@ -137,8 +137,7 @@ def create_language_profile(
     if not all([isinstance(word, str) for word in stop_words]):
         return None
 
-    tokenized_text = tokenize(text)
-    freq_dict = calculate_frequencies(remove_stop_words(tokenized_text, stop_words))
+    freq_dict = calculate_frequencies(remove_stop_words(tokenize(text), stop_words))
     unique_tokens = len(set(freq_dict))
     return language, freq_dict, unique_tokens
 
