@@ -37,17 +37,6 @@ def tokenize(text: str) -> Sequence[str] | None:
 
     return tokens
 
-    text = text.lower().split()
-    tokens = []
-    for words in text:
-        list_for_letters = []
-        for letters in words:
-            if letters.isalpha():
-                list_for_letters.append(letters)
-        clean_word = ''.join(list_for_letters)
-        if clean_word:
-            tokens.append(clean_word)
-    return tokens
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
     """
@@ -74,7 +63,6 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
 
     return cleaned_text
 
-    return [word for word in tokens if word not in stop_words]
 
 def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
     """
@@ -178,9 +166,6 @@ def create_language_profile(
 
     return language, freq_dict, n_words
 
-    freq_dict = calculate_frequencies(remove_stop_words(tokenize(text), stop_words))
-    unique_tokens = len(set(freq_dict))
-    return language, freq_dict, unique_tokens
 
 def check_profile(profile: ProfileType) -> bool:
     """
@@ -210,20 +195,6 @@ def check_profile(profile: ProfileType) -> bool:
 
     return True
 
-    language, freq_dict, unique_tokens = profile
-
-    if not isinstance(language, str):
-        return False
-    if not isinstance(freq_dict, dict):
-        return False
-    if not all(isinstance(word, str) for word in freq_dict.keys()):
-            return False
-    if not all(isinstance(number, float) for number in freq_dict.values()):
-            return False
-    if not isinstance(unique_tokens, int):
-        return False
-
-    return True
 
 def compare_profiles_by_top_n(
     unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
