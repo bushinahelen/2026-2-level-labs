@@ -73,6 +73,10 @@ def collect_frequencies(
     text_with_prepared_words = []
     for word in text.split():
         prepared_word = prepare_word(word, start_of_word, end_of_word)
+
+        if prepared_word is None:
+            return None
+
         text_with_prepared_words.append(prepared_word)
 
     frequency_dictionary = {}
