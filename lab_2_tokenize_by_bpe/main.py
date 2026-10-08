@@ -70,20 +70,16 @@ def collect_frequencies(
     if not isinstance(end_of_word, str):
         return None
 
-    text_with_prepared_words = []
+    frequency_dictionary = {}
     for word in text.split():
         prepared_word = prepare_word(word, start_of_word, end_of_word)
 
         if prepared_word is None:
             return None
 
-        text_with_prepared_words.append(prepared_word)
-
-    frequency_dictionary = {}
-    for word in text_with_prepared_words:
-        if word not in frequency_dictionary:
-            frequency_dictionary[word] = 0
-        frequency_dictionary[word] += 1
+        if prepared_word not in frequency_dictionary:
+            frequency_dictionary[prepared_word] = frequency_dictionary.get(prepared_word, 0)
+        frequency_dictionary[prepared_word] = frequency_dictionary.get(prepared_word, 0) + 1
 
     return frequency_dictionary
 
