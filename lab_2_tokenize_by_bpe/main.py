@@ -77,8 +77,6 @@ def collect_frequencies(
         if prepared_word is None:
             return None
 
-        if prepared_word not in frequency_dictionary:
-            frequency_dictionary[prepared_word] = frequency_dictionary.get(prepared_word, 0)
         frequency_dictionary[prepared_word] = frequency_dictionary.get(prepared_word, 0) + 1
 
     return frequency_dictionary
