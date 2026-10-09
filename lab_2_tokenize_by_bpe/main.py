@@ -108,22 +108,11 @@ def count_tokens_pairs(
     ):
         return None
 
-    list_keys = []
-    for key in word_frequencies:
-        list_keys.append(key)
-
-    all_pairs = []
-    for token in list_keys:
+    counts = {}
+    for token, value in word_frequencies.items():
         for i in range(len(token) - 1):
             pair = (token[i], token[i + 1])
-            all_pairs.append(pair)
-
-    counts = {}
-    for pair in all_pairs:
-        if pair in counts:
-            counts[pair] += 1
-        else:
-            counts[pair] = 1
+            counts[pair] = counts.get(pair, 0) + value
 
     return counts
 
