@@ -114,7 +114,7 @@ def count_tokens_pairs(
 
     all_pairs = []
     for token in list_keys:
-        for i in range(len(token)):
+        for i in range(len(token) - 1):
             pair = (token[i], token[i + 1])
             all_pairs.append(pair)
 
