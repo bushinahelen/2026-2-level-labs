@@ -194,6 +194,57 @@ def train(
     In case of corrupt input arguments or functions used return None,
     None is returned
     """
+    if not isinstance(word_frequencies, dict):
+        return None
+
+    if not all(
+        isinstance(key, tuple)
+        and all(isinstance(token, str) for token in key)
+        and isinstance(value, int)
+        for key, value in word_frequencies.items()
+    ):
+        return None
+
+    if not all(
+        isinstance(num_merges, int)
+        or num_merges < 0
+    ):
+        return None
+
+    if not isinstance(word_frequencies, dict):
+        return None
+
+    if not all(
+        isinstance(key, tuple)
+        and all(isinstance(token, str) for token in key)
+        and isinstance(value, int)
+        for key, value in word_frequencies.items()
+    ):
+        return None
+
+    if (not isinstance(num_merges, int)
+        or isinstance(num_merges, bool)
+        or num_merges < 0
+    ):
+        return None
+
+    for _ in range(num_merges):
+        counted_pairs = count_tokens_pairs(word_frequencies)
+
+        if counted_pairs is None:
+            return None
+
+    common_pairs = [key for key, value in counted_pairs.items() if value == max(counted_pairs.values())]
+    longest_length_pair = max(len(token[0]) + len(token[1]) for token in common_pairs)
+    longest_pair = [token for token in common_pairs if (len(token[0]) + len(token[1])) == longest_length_pair]
+    appropriate_pair = min(longest_pair, key=lambda pair: pair[0] + pair[1])
+    updated_dictionary = merge_tokens(word_frequencies, appropriate_pair)
+
+    if updated_dictionary is None:
+        return None
+
+    return updated_dictionary
+
 
 
 def get_vocabulary(
