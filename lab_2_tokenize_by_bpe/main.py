@@ -250,6 +250,31 @@ def get_vocabulary(
 
     In case of corrupt input arguments, None is returned
     """
+    if not isinstance(word_frequencies, dict):
+        return None
+
+    if not all(
+        isinstance(key, tuple)
+        and all(isinstance(token, str) for token in key)
+        and isinstance(value, int)
+        for key, value in word_frequencies.items()
+    ):
+        return None
+
+    if not isinstance(unknown_token, str):
+        return None
+
+    overall_tokens = set(unknown_token)
+    overall_tokens.add(unknown_token)
+
+    for key in word_frequencies:
+        for token in key:
+            overall_tokens.add(token)
+            for letter in token:
+                overall_tokens.add(letter)
+
+    sorted_overall_tokens = sorted(overall_tokens, key=lambda token: (-len(token), token))
+    return {token: index for index, token in enumerate(sorted_overall_tokens)}
 
 
 def decode(
