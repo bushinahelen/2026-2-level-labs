@@ -219,8 +219,8 @@ def train(
             return None
 
         common_pairs = [key for key, value in counted_pairs.items() if value == max(counted_pairs.values())]
-        longest_length_pair = max(len(token[0]) + len(token[1]) for token in common_pairs)
-        longest_pair = [token for token in common_pairs if (len(token[0]) + len(token[1])) == longest_length_pair]
+        longest_length = max(len(token[0] + token[1]) for token in common_pairs)
+        longest_pair = [token for token in common_pairs if (len(token[0] + token[1])) == longest_length]
         appropriate_pair = min(longest_pair, key=lambda pair: pair[0] + pair[1])
         word_frequencies = merge_tokens(word_frequencies, appropriate_pair)
 
