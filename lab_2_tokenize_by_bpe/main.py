@@ -172,7 +172,8 @@ def merge_tokens(
                 new_pair_token.append(token[index])
                 index += 1
 
-        updated_dictionary[tuple(new_pair_token)] = value
+        pair_key = tuple(new_pair_token)
+        updated_dictionary[pair_key] = updated_dictionary.get(pair_key, 0) + value
 
     return updated_dictionary
 

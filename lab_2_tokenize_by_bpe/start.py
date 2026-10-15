@@ -19,7 +19,8 @@ def main() -> None:
 
     result = None
 
-    result = lab_2_tokenize_by_bpe.main.train(text, 100)
+    word_dictionary = lab_2_tokenize_by_bpe.main.collect_frequencies(text, None, '</s>')
+    result = lab_2_tokenize_by_bpe.main.train(word_dictionary, 100)
     print(result)
     assert result, "Translation not working"
 
