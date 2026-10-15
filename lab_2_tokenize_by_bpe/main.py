@@ -218,6 +218,9 @@ def train(
         if counted_pairs is None:
             return None
 
+        if not counted_pairs:
+            break
+
         common_pairs = [key for key, value in counted_pairs.items() if value == max(counted_pairs.values())]
         longest_length = max(len(token[0] + token[1]) for token in common_pairs)
         longest_pair = [token for token in common_pairs if (len(token[0] + token[1])) == longest_length]
