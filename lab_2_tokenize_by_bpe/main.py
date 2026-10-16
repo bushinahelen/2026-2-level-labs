@@ -296,6 +296,40 @@ def decode(
 
     In case of corrupt input arguments, None is returned
     """
+    if not isinstance(encoded_text, (list, tuple)):
+        return None
+
+    if not all(isinstance(number, int) for number in encoded_text):
+        return None
+
+    if not isinstance(vocabulary, dict):
+        return None
+
+    if not all(
+        isinstance(key, str)
+        and isinstance(value, int)
+        for key, value in vocabulary.items()
+    ):
+        return None
+
+    if not isinstance(end_of_word_token, str):
+        return None
+
+    decoded_text = []
+    reversed_vocabulary = {value: token for token, value in vocabulary.items()}
+
+    for number in encoded_text:
+        if number in reversed_vocabulary:
+            token = reversed_vocabulary[number]
+        else:
+            token = '<unk>'
+
+        if token == end_of_word_token:
+            decoded_text.append(" ")
+        else:
+            decoded_text.append(token)
+
+    return "".join(decoded_text)
 
 
 def tokenize_word(
