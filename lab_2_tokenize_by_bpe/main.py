@@ -102,9 +102,9 @@ def count_tokens_pairs(
 
     if not all(
         isinstance(key, tuple)
-        and (isinstance(value, int) or isinstance(value, bool))
-        and isinstance(token, str)
-        for key, value in word_frequencies.items() for token in key
+        and all (isinstance(token, str) for token in key)
+        and isinstance(value, int)
+        for key, value in word_frequencies.items()
     ):
         return None
 
@@ -222,10 +222,8 @@ def train(
             break
 
         common_pairs = [key for key, value in counted_pairs.items() if value == max(counted_pairs.values())]
-        longest_length = max(len(token[0] + token[1]) for token in common_pairs)
-        longest_pair = [token for token in common_pairs if (len(token[0] + token[1])) == longest_length]
-        appropriate_pair = min(longest_pair, key=lambda pair: pair[0] + pair[1])
-        word_frequencies = merge_tokens(word_frequencies, appropriate_pair)
+        sorted_pairs = sorted(common_pairs, key=lambda pair: (-(len(pair[0]) + pair[1]), pair[0] + pair[1]))
+        word_frequencies = merge_tokens(word_frequencies, sorted_pairs[0])
 
         if word_frequencies is None:
             return None
@@ -264,8 +262,7 @@ def get_vocabulary(
     if not isinstance(unknown_token, str):
         return None
 
-    overall_tokens = set(unknown_token)
-    overall_tokens.add(unknown_token)
+    overall_tokens = {unknown_token}
 
     for key in word_frequencies:
         for token in key:
@@ -315,21 +312,18 @@ def decode(
     if not isinstance(end_of_word_token, str):
         return None
 
-    decoded_text = []
     reversed_vocabulary = {value: token for token, value in vocabulary.items()}
 
+    decoded_text = ""
+
     for number in encoded_text:
-        if number in reversed_vocabulary:
-            token = reversed_vocabulary[number]
-        else:
-            token = '<unk>'
-
+        token = reversed_vocabulary.get(number, '<unk>')
         if token == end_of_word_token:
-            decoded_text.append(" ")
+            decoded_text += " "
         else:
-            decoded_text.append(token)
+            decoded_text += token
 
-    return "".join(decoded_text)
+    return decoded_text
 
 
 def tokenize_word(
