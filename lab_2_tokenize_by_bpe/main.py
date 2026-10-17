@@ -222,7 +222,7 @@ def train(
             break
 
         common_pairs = [key for key, value in counted_pairs.items() if value == max(counted_pairs.values())]
-        sorted_pairs = sorted(common_pairs, key=lambda pair: (-(len(pair[0]) + pair[1]), pair[0] + pair[1]))
+        sorted_pairs = sorted(common_pairs, key=lambda pair: (-(len(pair[0] + pair[1])), pair[0] + pair[1]))
         word_frequencies = merge_tokens(word_frequencies, sorted_pairs[0])
 
         if word_frequencies is None:
