@@ -58,6 +58,9 @@ class TextProcessor:
                 if tokens and tokens[-1] != self._end_of_word_token:
                     tokens.append(self._end_of_word_token)
 
+        if not tokens:
+            return None
+
         return tuple(tokens)
 
     def _put(self, element: str) -> None:
@@ -106,7 +109,7 @@ class TextProcessor:
 
         In case of corrupt input arguments or arguments not included in storage, None is returned
         """
-        if not isinstance(element_id, int):
+        if not isinstance(element_id, int) or isinstance(element_id, bool):
             return None
 
         for token, identifier in self._storage.items():
@@ -131,7 +134,7 @@ class TextProcessor:
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
-        if not isinstance(text, str):
+        if not isinstance(text, str) or not text:
             return None
 
         tokenized_words = self._tokenize(text)
@@ -165,7 +168,7 @@ class TextProcessor:
         In case any of methods used return None, None is returned.
         """
 
-        if not isinstance(corpus, tuple):
+        if not isinstance(corpus, tuple) or not corpus:
             return None
 
         if not all(isinstance(number, int) and not isinstance(number, bool) for number in corpus):
@@ -198,7 +201,7 @@ class TextProcessor:
 
         In case of corrupt input arguments, None is returned
         """
-        if not isinstance(decoded_corpus, tuple):
+        if not isinstance(decoded_corpus, tuple) or not decoded_corpus:
             return None
 
         if not all(isinstance(token, str) for token in decoded_corpus):
@@ -230,7 +233,12 @@ class TextProcessor:
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
-        return self._postprocess_decoded_text(self._decode(encoded_corpus))
+        decoded_text = self._decode(encoded_corpus)
+
+        if decoded_text is None:
+            return None
+
+        return self._postprocess_decoded_text(decoded_text)
 
     def get_end_of_word_token(self) -> str:  # type: ignore[empty-body]
         """
