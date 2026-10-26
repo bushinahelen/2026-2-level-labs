@@ -4,9 +4,6 @@ Lab 3.
 Beam-search and natural language generation evaluation
 """
 
-# pylint:disable=too-few-public-methods
-
-
 class TextProcessor:
     """
     Handle text tokenization, encoding and decoding.
