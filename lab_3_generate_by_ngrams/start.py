@@ -2,7 +2,7 @@
 Generation by NGrams starter
 """
 
-from main import TextProcessor
+from main import TextProcessor, NGramLanguageModel
 
 
 def main() -> None:
@@ -18,7 +18,8 @@ def main() -> None:
     result = None
     text_processor = TextProcessor('_')
     encoded_corpus = text_processor.encode(text)
-    result = text_processor.decode(encoded_corpus)
+    n_gram_language_model = NGramLanguageModel(encoded_corpus, n_gram_size=3)
+    result = n_gram_language_model.build()
     print(result)
     assert result
 
