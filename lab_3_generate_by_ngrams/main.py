@@ -360,21 +360,21 @@ class NGramLanguageModel:
         if not isinstance(n_gram_corpus, tuple) or not n_gram_corpus:
             return False
 
-        for token in n_gram_corpus:
-            absolute_probability = n_gram_corpus.count(token)
-            first_n_gram = token[:(len(token) - 1)]
+        context_dictionary = {}
+        absolute_frequencies = {}
+        for n_gram in n_gram_corpus:
+            if n_gram not in absolute_frequencies:
+                absolute_frequencies[n_gram] = 0.0
+            absolute_frequencies[n_gram] += 1.0
 
-            overall_probability = 0
-            for n_gram in n_gram_corpus:
-                start = n_gram[:len(first_n_gram)]
-                if start == first_n_gram:
-                    overall_probability += 1
+            context = n_gram[:-1]
+            if context not in context_dictionary:
+                context_dictionary[context] = 0.0
+            context_dictionary[context] += 1.0
 
-            if overall_probability == 0:
-                return False
-
-            if token not in self._n_gram_frequencies:
-                self._n_gram_frequencies[token] = absolute_probability / overall_probability
+        for n_gram, frequency in absolute_frequencies.items():
+            context = n_gram[:-1]
+            self._n_gram_frequencies[n_gram] = frequency / context_dictionary[context]
 
         for token, frequency in self._n_gram_frequencies.items():
             if (
