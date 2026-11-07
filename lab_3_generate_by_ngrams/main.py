@@ -63,22 +63,6 @@ class TextProcessor:
 
         return tuple(tokens)
 
-    def _put(self, element: str) -> None:
-        """
-        Put an element into the storage, assign a unique id to it.
-
-        Args:
-            element (str): An element to put into storage
-
-        In case of corrupt input arguments or invalid argument length,
-        an element is not added to storage
-        """
-        if not isinstance(element, str) or len(element) != 1:
-            return None
-
-        if element not in self._storage:
-            self._storage[element] = len(self._storage)
-
     def get_id(self, element: str) -> int | None:
         """
         Retrieve a unique identifier of an element.
@@ -96,6 +80,15 @@ class TextProcessor:
             return None
 
         return self._storage.get(element)
+
+    def get_end_of_word_token(self) -> str:  # type: ignore[empty-body]
+        """
+        Retrieve value stored in self._end_of_word_token attribute.
+
+        Returns:
+            str: EoW token
+        """
+        return self._end_of_word_token
 
     def get_token(self, element_id: int) -> str | None:
         """
@@ -153,38 +146,63 @@ class TextProcessor:
 
         return tuple(encoded_corpus)
 
-
-    def _decode(self, corpus: tuple[int, ...]) -> tuple[str, ...] | None:
+    def _put(self, element: str) -> None:
         """
-        Decode sentence by replacing ids with corresponding letters.
+        Put an element into the storage, assign a unique id to it.
 
         Args:
-            corpus (tuple[int, ...]): A tuple of encoded tokens
+            element (str): An element to put into storage
+
+        In case of corrupt input arguments or invalid argument length,
+        an element is not added to storage
+        """
+        if not isinstance(element, str) or len(element) != 1:
+            return None
+
+        if element not in self._storage:
+            self._storage[element] = len(self._storage)
+
+    def decode(self, encoded_corpus: tuple[int, ...]) -> str | None:
+        """
+        Decode and postprocess encoded corpus by converting integer identifiers to string.
+
+        Special symbols are replaced with spaces (no multiple spaces in a row are allowed).
+        The first letter is capitalized, resulting sequence must end with a full stop.
+
+        Args:
+            encoded_corpus (tuple[int, ...]): A tuple of encoded tokens
 
         Returns:
-            tuple[str, ...] | None: Sequence with decoded tokens
+            str | None: Resulting text
+
+        In case of corrupt input arguments, None is returned.
+        In case any of methods used return None, None is returned.
+        """
+        if (
+            not isinstance(encoded_corpus, tuple)
+            or not encoded_corpus
+            or not all(isinstance(number, int) for number in encoded_corpus)
+        ):
+            return None
+
+        decoded_text = self._decode(encoded_corpus)
+
+        if decoded_text is None:
+            return None
+
+        return self._postprocess_decoded_text(decoded_text)
+
+    def fill_from_ngrams(self, content: dict) -> None:
+        """
+        Fill internal storage with letters from external JSON.
+
+        Args:
+            content (dict): ngrams from external JSON
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
 
-        if not isinstance(corpus, tuple) or not corpus:
-            return None
-
-        if not all(isinstance(number, int) and not isinstance(number, bool) for number in corpus):
-            return None
-
-        decoded_list = []
-
-        for number in corpus:
-            token = self.get_token(number)
-
-            if token is None:
-                return None
-
-            decoded_list.append(token)
-
-        return tuple(decoded_list)
 
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
@@ -217,37 +235,37 @@ class TextProcessor:
 
         return decoded_corpus
 
-    def decode(self, encoded_corpus: tuple[int, ...]) -> str | None:
+    def _decode(self, corpus: tuple[int, ...]) -> tuple[str, ...] | None:
         """
-        Decode and postprocess encoded corpus by converting integer identifiers to string.
-
-        Special symbols are replaced with spaces (no multiple spaces in a row are allowed).
-        The first letter is capitalized, resulting sequence must end with a full stop.
+        Decode sentence by replacing ids with corresponding letters.
 
         Args:
-            encoded_corpus (tuple[int, ...]): A tuple of encoded tokens
+            corpus (tuple[int, ...]): A tuple of encoded tokens
 
         Returns:
-            str | None: Resulting text
+            tuple[str, ...] | None: Sequence with decoded tokens
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
-        decoded_text = self._decode(encoded_corpus)
 
-        if decoded_text is None:
+        if not isinstance(corpus, tuple) or not corpus:
             return None
 
-        return self._postprocess_decoded_text(decoded_text)
+        if not all(isinstance(number, int) for number in corpus):
+            return None
 
-    def get_end_of_word_token(self) -> str:  # type: ignore[empty-body]
-        """
-        Retrieve value stored in self._end_of_word_token attribute.
+        decoded_list = []
 
-        Returns:
-            str: EoW token
-        """
-        return self._end_of_word_token
+        for number in corpus:
+            token = self.get_token(number)
+
+            if token is None:
+                return None
+
+            decoded_list.append(token)
+
+        return tuple(decoded_list)
 
 class WordProcessor(TextProcessor):
     """
@@ -323,8 +341,6 @@ class NGramLanguageModel:
         """
         self._encoded_corpus = encoded_corpus
         self.__n_gram_size = n_gram_size
-        if not n_gram_size >= 2:
-            return False
         self._n_gram_frequencies = {}
 
     def get_n_gram_size(self) -> int:  # type: ignore[empty-body]
@@ -356,33 +372,22 @@ class NGramLanguageModel:
         In case of corrupt input arguments or methods used return None,
         False is returned
         """
+        if not isinstance(self._encoded_corpus, tuple) or not self._encoded_corpus:
+            return False
+
         n_gram_corpus = self._extract_n_grams(self._encoded_corpus)
-        if not isinstance(n_gram_corpus, tuple) or not n_gram_corpus:
+        if n_gram_corpus is None:
             return False
 
         context_dictionary = {}
         absolute_frequencies = {}
         for n_gram in n_gram_corpus:
-            if n_gram not in absolute_frequencies:
-                absolute_frequencies[n_gram] = 0.0
-            absolute_frequencies[n_gram] += 1.0
-
+            absolute_frequencies[n_gram] = absolute_frequencies.get(n_gram, 0.0) + 1.0
             context = n_gram[:-1]
-            if context not in context_dictionary:
-                context_dictionary[context] = 0.0
-            context_dictionary[context] += 1.0
+            context_dictionary[context] = context_dictionary.get(context, 0.0) + 1.0
 
         for n_gram, frequency in absolute_frequencies.items():
-            context = n_gram[:-1]
-            self._n_gram_frequencies[n_gram] = frequency / context_dictionary[context]
-
-        for token, frequency in self._n_gram_frequencies.items():
-            if (
-                not isinstance(token, tuple)
-                or not all(isinstance(number, int) for number in token)
-                or not isinstance(frequency, float)
-            ):
-                return False
+            self._n_gram_frequencies[n_gram] = frequency / context_dictionary[n_gram[:-1]]
 
         return True
 
@@ -414,18 +419,19 @@ class NGramLanguageModel:
 
         In case of corrupt input arguments, None is returned
         """
-        if not isinstance(encoded_corpus, tuple):
+        if (
+            not isinstance(encoded_corpus, tuple)
+            or not encoded_corpus
+            or not all(isinstance(number, int) for number in encoded_corpus)
+        ):
             return None
-        if not all(isinstance(number, int) for number in encoded_corpus):
-            return None
-        if not encoded_corpus:
+
+        if len(encoded_corpus) < self.__n_gram_size:
             return None
 
         n_gram_corpus = []
-        start = 0
         for number in (range(len(encoded_corpus) - self.__n_gram_size + 1)):
-            n_gram = encoded_corpus[start: self.__n_gram_size + start]
-            start += 1
+            n_gram = encoded_corpus[number: number + self.__n_gram_size]
             n_gram_corpus.append(tuple(n_gram))
 
         return tuple(n_gram_corpus)
