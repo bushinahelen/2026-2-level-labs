@@ -203,7 +203,6 @@ class TextProcessor:
         In case any of methods used return None, None is returned.
         """
 
-
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
         Convert decoded sentence into the string sequence.
@@ -227,8 +226,7 @@ class TextProcessor:
 
         decoded_corpus = ''.join(decoded_corpus)
         decoded_corpus = decoded_corpus.replace(self._end_of_word_token, ' ')
-        decoded_corpus = ' '.join(decoded_corpus.split())
-        decoded_corpus = decoded_corpus.capitalize()
+        decoded_corpus = decoded_corpus.capitalize().rstrip()
 
         if decoded_corpus:
             decoded_corpus += '.'
@@ -359,6 +357,10 @@ class NGramLanguageModel:
         Args:
             frequencies (dict): Computed in advance frequencies for n-grams
         """
+        if not isinstance(frequencies, dict) or not frequencies:
+            return None
+
+        self._n_gram_frequencies = frequencies
 
     def build(self) -> bool:
         """
@@ -404,6 +406,25 @@ class NGramLanguageModel:
 
         In case of corrupt input arguments, None is returned
         """
+        if not isinstance(sequence, tuple) or not sequence:
+            return None
+
+        if not all(isinstance(number, int) for number in sequence):
+            return None
+
+        context_len = self.__n_gram_size - 1
+        if len(sequence) < context_len:
+            return None
+
+        context = sequence[-context_len:]
+
+        context_dictionary = {}
+        for key, value in self._n_gram_frequencies.items():
+            if key[:context_len] == context:
+                new_key = key[-1]
+                context_dictionary[new_key] = value
+
+        return context_dictionary
 
     def _extract_n_grams(
         self, encoded_corpus: tuple[int, ...]
@@ -454,6 +475,8 @@ class GreedyTextGenerator:
             language_model (NGramLanguageModel): A language model to use for text generation
             text_processor (TextProcessor): A TextProcessor instance to handle text processing
         """
+        self._model = language_model
+        self._text_processor = text_processor
 
     def run(self, prompt: str, seq_len: int) -> str | None:
         """
@@ -469,6 +492,27 @@ class GreedyTextGenerator:
         In case of corrupt input arguments or methods used return None,
         None is returned
         """
+        if not isinstance(prompt, str):
+            return None
+
+        if not isinstance(seq_len, int) or seq_len <= 0:
+            return None
+
+        encoded_prompt = self._text_processor.encode(prompt)
+
+        if encoded_prompt is None:
+            return None
+
+        for _ in range(seq_len):
+            next_token = self._model.generate_next_token(tuple(encoded_prompt))
+
+            if not next_token:
+                break
+
+            max_token = max(next_token.items(), key=lambda x: (x[1], x[0]))[0]
+            encoded_prompt += (max_token, )
+
+        return self._text_processor.decode(encoded_prompt)
 
 
 class BeamSearcher:
