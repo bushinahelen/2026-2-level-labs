@@ -504,7 +504,7 @@ class GreedyTextGenerator:
             return None
 
         for _ in range(seq_len):
-            next_token = self._model.generate_next_token(tuple(encoded_prompt))
+            next_token = self._model.generate_next_token(encoded_prompt)
 
             if not next_token:
                 break
