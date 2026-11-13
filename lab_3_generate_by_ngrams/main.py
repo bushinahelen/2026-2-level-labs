@@ -496,21 +496,23 @@ class GreedyTextGenerator:
         if not isinstance(seq_len, int) or seq_len <= 0:
             return None
 
-        encoded_prompt = list(self._text_processor.encode(prompt))
+        encoded_prompt = self._text_processor.encode(prompt)
 
         if encoded_prompt is None:
             return None
 
+        listed_prompt = list(encoded_prompt)
+
         for _ in range(seq_len):
-            next_token = self._model.generate_next_token(tuple(encoded_prompt))
+            next_token = self._model.generate_next_token(tuple(listed_prompt))
 
             if not next_token:
                 break
 
             max_token = max(next_token.items(), key=lambda x: (x[1], x[0]))[0]
-            encoded_prompt.append(max_token)
+            listed_prompt.append(max_token)
 
-        return self._text_processor.decode(tuple(encoded_prompt))
+        return self._text_processor.decode(tuple(listed_prompt))
 
 
 class BeamSearcher:
