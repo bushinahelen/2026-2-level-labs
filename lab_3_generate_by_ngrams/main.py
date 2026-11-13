@@ -4,6 +4,9 @@ Lab 3.
 Beam-search and natural language generation evaluation
 """
 
+# pylint:disable=too-few-public-methods
+
+
 class TextProcessor:
     """
     Handle text tokenization, encoding and decoding.
@@ -50,11 +53,7 @@ class TextProcessor:
             if symbol.isalpha():
                 tokens.append(symbol)
 
-            elif symbol.isspace():
-                if tokens and tokens[-1] != self._end_of_word_token:
-                    tokens.append(self._end_of_word_token)
-
-            elif index == len(text) - 1 and not symbol.isalnum() and not symbol.isspace():
+            elif symbol.isspace() or (index == len(text) - 1 and not symbol.isalnum()):
                 if tokens and tokens[-1] != self._end_of_word_token:
                     tokens.append(self._end_of_word_token)
 
@@ -203,36 +202,6 @@ class TextProcessor:
         In case any of methods used return None, None is returned.
         """
 
-    def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
-        """
-        Convert decoded sentence into the string sequence.
-
-        Special symbols are replaced with spaces (no multiple spaces in a row are allowed).
-        The first letter is capitalized, resulting sequence must end with a full stop.
-
-        Args:
-            decoded_corpus (tuple[str, ...]): A tuple of decoded tokens
-
-        Returns:
-            str | None: Resulting text
-
-        In case of corrupt input arguments, None is returned
-        """
-        if not isinstance(decoded_corpus, tuple) or not decoded_corpus:
-            return None
-
-        if not all(isinstance(token, str) for token in decoded_corpus):
-            return None
-
-        decoded_corpus = ''.join(decoded_corpus)
-        decoded_corpus = decoded_corpus.replace(self._end_of_word_token, ' ')
-        decoded_corpus = decoded_corpus.capitalize().rstrip()
-
-        if decoded_corpus:
-            decoded_corpus += '.'
-
-        return decoded_corpus
-
     def _decode(self, corpus: tuple[int, ...]) -> tuple[str, ...] | None:
         """
         Decode sentence by replacing ids with corresponding letters.
@@ -264,6 +233,36 @@ class TextProcessor:
             decoded_list.append(token)
 
         return tuple(decoded_list)
+
+    def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
+        """
+        Convert decoded sentence into the string sequence.
+
+        Special symbols are replaced with spaces (no multiple spaces in a row are allowed).
+        The first letter is capitalized, resulting sequence must end with a full stop.
+
+        Args:
+            decoded_corpus (tuple[str, ...]): A tuple of decoded tokens
+
+        Returns:
+            str | None: Resulting text
+
+        In case of corrupt input arguments, None is returned
+        """
+        if not isinstance(decoded_corpus, tuple) or not decoded_corpus:
+            return None
+
+        if not all(isinstance(token, str) for token in decoded_corpus):
+            return None
+
+        decoded_corpus = ''.join(decoded_corpus)
+        decoded_corpus = decoded_corpus.replace(self._end_of_word_token, ' ')
+        decoded_corpus = decoded_corpus.capitalize().rstrip()
+
+        if decoded_corpus:
+            decoded_corpus += '.'
+
+        return decoded_corpus
 
 class WordProcessor(TextProcessor):
     """
@@ -421,8 +420,7 @@ class NGramLanguageModel:
         context_dictionary = {}
         for key, value in self._n_gram_frequencies.items():
             if key[:context_len] == context:
-                new_key = key[-1]
-                context_dictionary[new_key] = value
+                context_dictionary[key[-1]] = value
 
         return context_dictionary
 
@@ -498,21 +496,21 @@ class GreedyTextGenerator:
         if not isinstance(seq_len, int) or seq_len <= 0:
             return None
 
-        encoded_prompt = self._text_processor.encode(prompt)
+        encoded_prompt = list(self._text_processor.encode(prompt))
 
         if encoded_prompt is None:
             return None
 
         for _ in range(seq_len):
-            next_token = self._model.generate_next_token(encoded_prompt)
+            next_token = self._model.generate_next_token(tuple(encoded_prompt))
 
             if not next_token:
                 break
 
             max_token = max(next_token.items(), key=lambda x: (x[1], x[0]))[0]
-            encoded_prompt += (max_token, )
+            encoded_prompt.append(max_token)
 
-        return self._text_processor.decode(encoded_prompt)
+        return self._text_processor.decode(tuple(encoded_prompt))
 
 
 class BeamSearcher:
