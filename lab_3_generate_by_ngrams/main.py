@@ -207,9 +207,6 @@ class TextProcessor:
 
         Args:
             content (dict): ngrams from external JSON
-
-        In case of corrupt input arguments, None is returned.
-        In case any of methods used return None, None is returned.
         """
         if not isinstance(content, dict) or not content:
             return
@@ -252,24 +249,6 @@ class TextProcessor:
 
         return tuple(decoded_corpus)
 
-        if not isinstance(corpus, tuple) or not corpus:
-            return None
-
-        if not all(isinstance(number, int) for number in corpus):
-            return None
-
-        decoded_list = []
-
-        for number in corpus:
-            token = self.get_token(number)
-
-            if token is None:
-                return None
-
-            decoded_list.append(token)
-
-        return tuple(decoded_list)
-
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
         Convert decoded sentence into the string sequence.
@@ -304,17 +283,6 @@ class TextProcessor:
 
         return decoded_element.capitalize() + "."
 
-        if not all(isinstance(token, str) for token in decoded_corpus):
-            return None
-
-        decoded_corpus = ''.join(decoded_corpus)
-        decoded_corpus = decoded_corpus.replace(self._end_of_word_token, ' ')
-        decoded_corpus = decoded_corpus.capitalize().rstrip()
-
-        if decoded_corpus:
-            decoded_corpus += '.'
-
-        return decoded_corpus
 
 class WordProcessor(TextProcessor):
     """

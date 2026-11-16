@@ -2,7 +2,7 @@
 Generation by NGrams starter
 """
 
-from main import GreedyTextGenerator, NGramLanguageModel, TextProcessor
+# pylint:disable=too-many-locals, unused-import, unused-variable
 
 from lab_3_generate_by_ngrams.main import (
     BackOffGenerator,
