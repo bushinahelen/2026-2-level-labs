@@ -10,7 +10,7 @@ Summarize text using TextRank algorithm
 
    Type alias representing a preprocessed sentence as a tuple of strings.
 """
-
+#new_commit
 # pylint:disable=too-few-public-methods, unused-argument
 from typing import Any, Sequence
 
