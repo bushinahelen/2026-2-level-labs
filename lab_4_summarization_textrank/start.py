@@ -6,6 +6,7 @@ TextRank summarizer starter
 
 from main import SentenceEncoder, SentencePreprocessor
 
+
 def main() -> None:
     """
     Launches an implementation.
