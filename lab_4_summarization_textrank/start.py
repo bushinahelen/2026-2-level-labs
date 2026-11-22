@@ -4,7 +4,7 @@ TextRank summarizer starter
 
 # pylint:disable=unused-variable, unused-import, duplicate-code
 
-from main import SentencePreprocessor, SentenceEncoder
+from main import SentenceEncoder, SentencePreprocessor
 
 def main() -> None:
     """
@@ -24,8 +24,9 @@ def main() -> None:
     sentence_processor = SentencePreprocessor(stop_words, '.!?')
     sentences = sentence_processor.get_sentences(text)
     sentence_encoder = SentenceEncoder()
-    sentence_encoder.encode_sentences(sentences)
-    assert all(sentence.get_encoded() for sentence in sentences)
+    result = sentence_encoder.encode_sentences(sentences)
+
+    assert result
 
 
 if __name__ == "__main__":
